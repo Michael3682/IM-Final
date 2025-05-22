@@ -11,7 +11,7 @@
 
 <body>
     <nav>
-        <a href="index.php">Log out</a>
+        <a id="#logout" href="index.php">Log out</a>
     </nav>
     <form action="#" method="POST">
         <div class="form-section">
@@ -101,6 +101,9 @@
     <script>
         $(document).ready(function () {
             const username = localStorage.getItem("loggedInUsername");
+            $('#logout').click(() => {
+                localStorage.removeItem("loggedInUsername");
+            });
             if (username) {
                 $('#username').val(username).prop('readonly', true);
             }

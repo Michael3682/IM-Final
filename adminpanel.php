@@ -9,6 +9,9 @@
 </head>
 
 <body>
+    <nav>
+        <a id="#logout" href="index.php">Log out</a>
+    </nav>
     <div class="view-section">
         <h1>Enrolled Student List</h1>
         <table class="students-list-container">
