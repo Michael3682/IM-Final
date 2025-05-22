@@ -94,8 +94,8 @@ function loop() {
     requestAnimationFrame(loop)
 }
 
-while (balls.length < 20) {
-    const ball = new Ball(Math.floor(Math.random() * 50 + 20))
+while (balls.length < 30) {
+    const ball = new Ball(Math.floor(Math.random() * 10))
     balls.push(ball)
 }
 

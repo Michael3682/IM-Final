@@ -55,31 +55,11 @@ function updateUser()
     $ret = updateUsers($id, $user);
     echo json_encode(array("ret" => $ret));
 }
-// function deleteUser()
-// {
-//     $id = $_POST['id'];
-//     try {
-//         $db = new DbController();
-//         if ($db->getState() == true) {
-//             $conn = $db->getDb();
-//             $stmt = $conn->prepare("DELETE FROM studentenrollment WHERE id = :id");
-//             $stmt->bindParam(":id", $id);
-//             $stmt->execute();
-//             $stmt = $conn->prepare("SET @id := 0; UPDATE studentenrollment SET id = (@id := @id + 1)");
-//             $stmt->execute();
-//             $stmt = $conn->prepare("ALTER TABLE studentenrollment AUTO_INCREMENT = 1");
-//             $stmt->execute();
-//             echo json_encode(array("retval" => 1, "message" => "User deleted successfully!"));
-//         } else {
-//             echo json_encode(array("retval" => 0, "message" => "Failed to connect to the database"));
-//         }
-//     } catch (Exception $e) {
-//         echo json_encode(array("retval" => -1, "message" => "Error: " . $e->getMessage()));
-//     }
-// }
-function deleteUser() {
+
+function deleteUser()
+{
     $id = isset($_POST['id']) ? $_POST['id'] : 0;
-    $ret = deleteUsers($id);
+    $ret = deleteUsersID($id);
     echo json_encode(array("ret" => $ret));
 }
 function checkLoginUser()
@@ -96,20 +76,28 @@ function createNewUser()
     $ret = createNewUsers($username, $password);
     echo json_encode(array("ret" => $ret));
 }
-function checkUsername() 
+function checkUsername()
 {
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $ret = checkUsersUsername($username);
     echo json_encode(array("ret" => $ret));
 }
-function checkUserStudentID() {
+function checkUserStudentID()
+{
     $studentid = isset($_POST['studentid']) ? $_POST['studentid'] : '';
     $ret = checkUsersStudentID($studentid);
     echo json_encode(array("ret" => $ret));
 }
-function checkUserFullName() {
+function checkUserFullName()
+{
     $fullname = isset($_POST['fullname']) ? $_POST['fullname'] : '';
     $ret = checkUsersFullName($fullname);
+    echo json_encode(array("ret" => $ret));
+}
+function checkUserEnrollment()
+{
+    $username = isset($_POST['username']) ? trim($_POST['username']) : '';
+    $ret = checkUsersEnrollment($username);
     echo json_encode(array("ret" => $ret));
 }
 ?>

@@ -1,0 +1,139 @@
+* {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    list-style: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: black;
+}
+
+button {
+    cursor: pointer;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    height: max-content;
+    width: max-content;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1.75rem 2.5rem;
+    transition: all .5s linear;
+    gap: 1.5rem;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(43, 44, 66, 0.37);
+    backdrop-filter: blur(20px);
+    color: white;
+
+    h1 {
+        margin: 0;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+
+        .form-label label {
+            font-size: large;
+        }
+
+        .form-input input {
+            padding: .25rem 0;
+            border: 1px solid transparent;
+            border-bottom: 1px solid rgb(168, 168, 168);
+            outline: none;
+            width: 100%;
+            font-size: medium;
+            color: rgb(255, 255, 255);
+            transition: all .25s linear;
+            background-color: transparent;
+        }
+
+        .form-input input:focus {
+            border-bottom: 1px solid rgb(43, 210, 252);
+        }
+
+        .form-input input:focus::placeholder {
+            color: transparent;
+        }
+
+        .form-input input::placeholder {
+            color: rgb(168, 168, 168);
+        }
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: max-content;
+        height: max-content;
+        margin-top: 1.5rem;
+        gap: 1rem;
+
+        button {
+            font-size: medium;
+            width: 100%;
+            padding: .2rem;
+        }
+
+        .label {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: .5rem;
+
+            p {
+                margin: 0;
+            }
+        }
+
+        button:first-child {
+            background-color: rgb(43, 210, 252);
+            border: 1px solid rgb(43, 210, 252);
+            color: white;
+            font-size: large;
+            transition: all .25s linear;
+            border-radius: 5px;
+        }
+
+        button:first-child:hover {
+            background-color: transparent;
+            border: 1px solid rgb(43, 210, 252);
+            color: rgb(43, 210, 252);
+        }
+
+        button:last-child {
+            font-size: small;
+            width: max-content;
+            background-color: transparent;
+            border: 1px solid transparent;
+            transition: all .25s linear;
+            color: white;
+            border-bottom: 1px solid rgb(221, 221, 221);
+        }
+
+        button:last-child:hover {
+            border: 1px solid rgb(43, 210, 252);
+            color: rgb(43, 210, 252);
+            border-radius: 5px;
+        }
+    }
+}

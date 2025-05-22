@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="design2.css">
+    <link rel="stylesheet" href="studentlistdesign.css">
 </head>
 
 <body>
@@ -13,7 +13,7 @@
         <h1>Enrolled Student List</h1>
         <table class="students-list-container">
         </table>
-        <button id="back" type="button" onclick="window.location.href='index.php'">Back</button>
+        <button id="back" type="button" onclick="window.location.href='form.php'">Back</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -44,19 +44,26 @@
                                                 <td>${user.course}</td>
                                                 <td>${user.gradesection}</td>
                                                 <td>${user.age}</td>
+                                                <td>
+                                                    <button type="button" class="btnEdit" data-id="${user.id}">Edit</button>
+                                                    <button type="button" class="btnDelete" data-id="${user.id}">Delete</button>
+                                                </td>
                                             </tr>
-                                            <td>
-                                                <button type="button" class="btnEdit" data-id="${user.id}">Edit</button>
-                                                <button type="button" class="btnDelete" data-id="${user.id}">Delete</button>
-                                            </td>
                                             `;
                             });
                             $('.students-list-container').html(userHtml);
                         } else {
                             Swal.fire({
-                                icon: "info",
-                                title: "Oops...",
-                                text: response.data.message
+                                toast: true,
+                                position: 'bottom-right',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true,
+                                icon: "error",
+                                iconColor: "rgb(0, 0, 0)",
+                                title: "Error fetching users",
+                                background: "rgb(43, 210, 252)",
+                                color: "rgb(0, 0, 0)"
                             });
                         }
                     })
@@ -65,23 +72,69 @@
                     });
             }
             list();
-            $(document).on('click', '.btnDelete', () => {
+            $(document).on('click', '.btnEdit', function () {
                 const id = $(this).data('id');
-                if (confirm("Are you sure you want to delete this user?")) {
-                    const frm = new FormData();
-                    frm.append("method", "deleteUser");
-                    frm.append("id", id);
-                    axios.post("handler.php", frm)
-                        .then(function (response) {
-                            if (response.data.ret == 1) {
-                                alert("Data Deleted Successfully");
-                                list();
-                            }
-                        })
-                        .catch(function (error) {
-                            console.error("Error deleting user:", error);
-                        });
-                }
+                window.location.href = `edituser.php?id=${id}`;
+            })
+            $(document).on('click', '.btnDelete', function () {
+                const id = $(this).data('id');
+                Swal.fire({
+                    toast: true,
+                    position: 'bottom-right',
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    cancelButtonColor: "rgb(0, 101, 126)",
+                    iconColor: "rgb(0, 0, 0)",
+                    confirmButtonText: "Yes, delete it!",
+                    background: "rgb(43, 210, 252)",
+                    color: "rgb(0, 0, 0)",
+                    confirmButtonColor: "rgb(0, 0, 0)"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const frm = new FormData();
+                        frm.append("method", "deleteUser");
+                        frm.append("id", id);
+                        axios.post("handler.php", frm)
+                            .then(function (response) {
+                                console.log(response.data.ret);
+                                if (response.data.ret == 1) {
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'bottom-right',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true,
+                                        icon: "success",
+                                        iconColor: "rgb(0, 0, 0)",
+                                        title: "User deleted successfully",
+                                        background: "rgb(43, 210, 252)",
+                                        color: "rgb(0, 0, 0)"
+                                    }).then(() => {
+                                        location.reload();
+                                        list();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'bottom-right',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true,
+                                        icon: "error",
+                                        iconColor: "rgb(0, 0, 0)",
+                                        title: "Error deleting user",
+                                        background: "rgb(43, 210, 252)",
+                                        color: "rgb(0, 0, 0)"
+                                    });
+                                }
+                            })
+                            .catch(function (error) {
+                                console.error("Error deleting user:", error);
+                            });
+                    }
+                });
             });
         });
     </script>

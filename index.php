@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="indexregisterdesign.css">
 </head>
 
 <body>
@@ -26,8 +27,13 @@
                 <input type="password" name="password" id="password" placeholder="Password">
             </div>
         </div>
-        <button id="btnLogin" type="button">Login</button>
-        <button type="button" onclick="window.location.href='register.php'">Register</button>
+        <div class="btn-container">
+            <button id="btnLogin" type="button">Login</button>
+            <div class="label">
+                <p>Don't have an account?</p>
+                <button type="button" onclick="window.location.href='register.php'">Register</button>
+            </div>
+        </div>
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -41,28 +47,37 @@
 
                 if (usernameAdmin == 'admin' && passwordAdmin == 'admin') {
                     Swal.fire({
-                        icon: "success",
-                        title: "Logged In Successfully",
-                        background: "rgb(20, 20, 20)",
-                        color: "rgb(240, 240, 240)",
+                        toast: true,
+                        position: 'bottom-right',
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: "success",
+                        iconColor: "rgb(0, 0, 0)",
+                        title: "Login Successfully",
+                        background: "rgb(43, 210, 252)",
+                        color: "rgb(0, 0, 0)"
                     }).then(() => {
                         window.location.href = "adminpanel.php";
                     })
                 }
-                
+
                 const username = usernameAdmin;
                 const password = passwordAdmin;
 
                 if (!username || !password) {
                     Swal.fire({
-                        icon: 'warning',
-                        title: 'Fields required',
-                        background: "rgb(20, 20, 20)",
-                        color: "rgb(240, 240, 240)",
+                        toast: true,
+                        position: 'bottom-right',
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: "warning",
+                        iconColor: "rgb(0, 0, 0)",
+                        title: "Oops...",
+                        text: "Please fill out all the fields!",
+                        background: "rgb(43, 210, 252)",
+                        color: "rgb(0, 0, 0)"
                     });
                     return;
                 }
@@ -74,27 +89,37 @@
                     .then(function (response) {
                         if (response.data.ret == 0) {
                             Swal.fire({
-                                icon: 'warning',
-                                title: 'Invalid Username or Password',
-                                background: "rgb(20, 20, 20)",
-                                color: "rgb(240, 240, 240)",
+                                toast: true,
+                                position: 'bottom-right',
                                 showConfirmButton: false,
-                                timer: 1000
+                                timer: 1500,
+                                timerProgressBar: true,
+                                icon: "warning",
+                                iconColor: "rgb(0, 0, 0)",
+                                title: "Oops...",
+                                text: "Invalid username or password!",
+                                background: "rgb(43, 210, 252)",
+                                color: "rgb(0, 0, 0)"
                             });
-                            console.log("fail");
+                            $("#username").val("");
+                            $("#password").val("");
                         }
                         else if (response.data.ret == 1) {
+                            localStorage.setItem("loggedInUsername", username);
                             Swal.fire({
-                                icon: "success",
-                                title: "Logged In Successfully",
-                                background: "rgb(20, 20, 20)",
-                                color: "rgb(240, 240, 240)",
+                                toast: true,
+                                position: 'bottom-right',
                                 showConfirmButton: false,
-                                timer: 1000
+                                timer: 1500,
+                                timerProgressBar: true,
+                                icon: "success",
+                                iconColor: "rgb(0, 0, 0)",
+                                title: "Login Successfully",
+                                background: "rgb(43, 210, 252)",
+                                color: "rgb(0, 0, 0)"
                             }).then(() => {
                                 window.location.href = "form.php";
                             })
-                            console.log("success");
                         }
                     })
             })

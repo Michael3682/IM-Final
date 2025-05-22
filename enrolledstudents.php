@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="design2.css">
+    <link rel="stylesheet" href="studentlistdesign.css">
 </head>
 
 <body>
@@ -13,7 +13,7 @@
         <h1>Enrolled Student List</h1>
         <table class="students-list-container">
         </table>
-        <button id="back" type="button" onclick="window.location.href='index.php'">Back</button>
+        <button id="back" type="button" onclick="window.location.href='form.php'">Back</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -44,19 +44,22 @@
                                                 <td>${user.course}</td>
                                                 <td>${user.gradesection}</td>
                                                 <td>${user.age}</td>
-                                            </tr>`;
+                                            </tr>
+                                            `;
                             });
-                            // <td>
-                            //     <button class="btnEdit" data-id="${user.id}">Edit</button>
-                            //     <button class="btnDelete" data-id="${user.id}">Delete</button>
-                            // </td>
                             $('.students-list-container').html(userHtml);
                         } else {
                             Swal.fire({
+                                toast: true,
+                                position: 'bottom-right',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true,
                                 icon: "info",
-                                title: "Oops...",
-                                text: response.data.message
-
+                                iconColor: "rgb(0, 0, 0)",
+                                title: "No Enrolled Students",
+                                background: "rgb(43, 210, 252)",
+                                color: "rgb(0, 0, 0)"
                             });
                         }
                     })
@@ -65,22 +68,6 @@
                     });
             }
             list();
-            $(document).on('click', '.btnDelete', (e) => {
-                e.preventDefault();
-                const userId = $(this).data('id');
-                if (confirm("Are you sure you want to delete this user?")) {
-                    const frm = new FormData();
-                    frm.append("method", "deleteUser");
-                    frm.append("id", userId);
-                    axios.post("handler.php", frm)
-                        .then(function (response) {
-                            if (response.data.retval == 1) {
-                                alert("Data Deleted Successfully");
-                                list();
-                            }
-                        });
-                }
-            });
         });
     </script>
 </body>

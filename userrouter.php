@@ -48,7 +48,27 @@ function updateUsers($id, $users)
     $db = new DbController();
     if ($db->getState() == true) {
         $con = $db->getDb();
-        $sql = "UPDATE studentenrollment SET studentid = :studentid, fullname = :fullname, gradesection = :gradesection, course = :course, age = :age, username = :username, password = :password WHERE id = :id";
+
+        $stmt = $con->prepare("SELECT password FROM studentenrollment WHERE id = :id");
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $currentPassword = $existing ? $existing['password'] : '';
+
+        // Use existing password if new one is not provided
+        $passwordToSave = !empty($users['password']) ? $users['password'] : $currentPassword;
+
+        $sql = "UPDATE studentenrollment 
+                SET studentid = :studentid, 
+                    fullname = :fullname, 
+                    gradesection = :gradesection, 
+                    course = :course, 
+                    age = :age, 
+                    username = :username, 
+                    password = :password 
+                WHERE id = :id";
+
         $stmt = $con->prepare($sql);
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":studentid", $users['studentid']);
@@ -57,28 +77,35 @@ function updateUsers($id, $users)
         $stmt->bindParam(":course", $users['course']);
         $stmt->bindParam(":age", $users['age']);
         $stmt->bindParam(":username", $users['username']);
-        $stmt->bindParam(":password", $users['password']);
+        $stmt->bindParam(":password", $passwordToSave);
         $stmt->execute();
-        if ($stmt) {
-            return 1;
-        } else {
-            return 0;
-        }
+
+        return $stmt ? 1 : 0;
     }
 }
-function deleteUsers($id) {
-    $db = new DbController();
-    if ($db->getState() == true) {
-        $con = $db->getDb();
-        $sql = "DELETE FROM studentenrollment WHERE id = :id";
-        $stmt = $con->prepare($sql);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-        if ($stmt) {
-            return 1;
-        } else {
-            return 0;
+
+function deleteUsersID($id)
+{
+    $id = $_POST['id'];
+    try {
+        $db = new DbController();
+        if ($db->getState() == true) {
+            $conn = $db->getDb();
+            $stmt = $conn->prepare("DELETE FROM studentenrollment WHERE id = :id");
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+            $stmt = $conn->prepare("SET @id := 0; UPDATE studentenrollment SET id = (@id := @id + 1)");
+            $stmt->execute();
+            $stmt = $conn->prepare("ALTER TABLE studentenrollment AUTO_INCREMENT = 1");
+            $stmt->execute();
+            if ($stmt) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
+    } catch (Exception $e) {
+        echo json_encode(array("retval" => -1, "message" => "Error: " . $e->getMessage()));
     }
 }
 function checkLoginUsers($username, $password)
@@ -99,7 +126,8 @@ function checkLoginUsers($username, $password)
         }
     }
 }
-function createNewUsers($username, $password) {
+function createNewUsers($username, $password)
+{
     $db = new DbController();
     if ($db->getState() == true) {
         $con = $db->getDb();
@@ -115,7 +143,7 @@ function createNewUsers($username, $password) {
         }
     }
 }
-function checkUsersUsername($username) 
+function checkUsersUsername($username)
 {
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $db = new DbController();
@@ -133,7 +161,7 @@ function checkUsersUsername($username)
         }
     }
 }
-function checkUsersStudentID($studentid) 
+function checkUsersStudentID($studentid)
 {
     $studentid = isset($_POST['studentid']) ? $_POST['studentid'] : '';
     $db = new DbController();
@@ -151,7 +179,7 @@ function checkUsersStudentID($studentid)
         }
     }
 }
-function checkUsersFullName($fullname) 
+function checkUsersFullName($fullname)
 {
     $fullname = isset($_POST['fullname']) ? $_POST['fullname'] : '';
     $db = new DbController();
@@ -168,5 +196,26 @@ function checkUsersFullName($fullname)
             return false;
         }
     }
+}
+function checkUsersEnrollment($username)
+{
+    $db = new DbController();
+    if ($db->getState() == true) {
+        $con = $db->getDb();
+        $sql = "SELECT * FROM studentenrollment WHERE username = :username 
+                AND studentid IS NOT NULL AND TRIM(studentid) <> ''
+                AND fullname IS NOT NULL AND TRIM(fullname) <> ''
+                AND course IS NOT NULL AND TRIM(course) <> ''
+                AND gradesection IS NOT NULL AND TRIM(gradesection) <> ''
+                AND age IS NOT NULL AND TRIM(age) <> ''";
+
+        $stmt = $con->prepare($sql);
+        $stmt->bindParam(":username", $username);
+        $stmt->execute();
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $user ? true : false;
+    }
+    return false;
 }
 ?>

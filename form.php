@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="formDesign.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
 </head>
 
 <body>
+    <nav>
+        <a href="index.php">Log out</a>
+    </nav>
     <form action="#" method="POST">
-        <div class="enrollment-section">
+        <div class="form-section">
             <h1>Enrollment Form</h1>
             <div class="form-group">
                 <div class="form-label">
@@ -97,74 +100,167 @@
     <script src="bg.js"></script>
     <script>
         $(document).ready(function () {
+            const username = localStorage.getItem("loggedInUsername");
+            if (username) {
+                $('#username').val(username).prop('readonly', true);
+            }
             $('#btnSave').click(() => {
-                let username = $('#username').val().trim();
-                let studentid = $('#studentid').val().trim();
-                let fullname = $('#fullname').val();
-                let gradesection = $('#gradesection').val();
-                let course = $('#course').val();
-                let age = $('#age').val().trim();
-                console.log("dwadwa")
+                const username = $('#username').val().trim();
+                const studentid = $('#studentid').val().trim();
+                const fullname = $('#fullname').val();
+                const gradesection = $('#gradesection').val();
+                const course = $('#course').val();
+                const age = $('#age').val().trim();
                 if (!username || !studentid || !fullname || !age || !gradesection || !course) {
                     Swal.fire({
+                        toast: true,
+                        position: 'bottom-right',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true,
                         icon: "warning",
+                        iconColor: "rgb(0, 0, 0)",
                         title: "Oops...",
                         text: "Please fill out all the fields!",
-                        background: "rgb(20, 20, 20)",
-                        color: "rgb(240, 240, 240)",
-                        confirmButtonColor: "rgb(62, 216, 255)"
+                        background: "rgb(43, 210, 252)",
+                        color: "rgb(0, 0, 0)"
                     });
                     return;
                 }
                 if (!/^\d{7}$/.test(studentid)) {
                     Swal.fire({
+                        toast: true,
+                        position: 'bottom-right',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true,
                         icon: "warning",
+                        iconColor: "rgb(0, 0, 0)",
                         title: "Invalid Student ID",
                         text: "Student ID must be a 7-digit number.",
-                        background: "rgb(20, 20, 20)",
-                        color: "rgb(240, 240, 240)",
-                        confirmButtonColor: "rgb(62, 216, 255)"
+                        background: "rgb(43, 210, 252)",
+                        color: "rgb(0, 0, 0)"
                     });
                     $('#studentid').val('');
                     return;
                 }
                 if (!/^\d{1,3}$/.test(age)) {
                     Swal.fire({
+                        toast: true,
+                        position: 'bottom-right',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true,
                         icon: "warning",
+                        iconColor: "rgb(0, 0, 0)",
                         title: "Invalid Age",
                         text: "Age must be a number (max 3 digits).",
-                        background: "rgb(20, 20, 20)",
-                        color: "rgb(240, 240, 240)",
-                        confirmButtonColor: "rgb(62, 216, 255)"
+                        background: "rgb(43, 210, 252)",
+                        color: "rgb(0, 0, 0)"
                     });
                     $('#age').val('');
                     return;
                 }
                 else {
                     const frm = new FormData();
-                    frm.append("method", "saveUser");
-                    frm.append('username', username);
+                    frm.append("method", "checkUserStudentID");
                     frm.append('studentid', studentid);
-                    frm.append('fullname', fullname);
-                    frm.append("gradesection", gradesection);
-                    frm.append("course", course);
-                    frm.append('age', age);
                     axios.post("handler.php", frm)
                         .then(function (response) {
                             if (response.data.ret == 1) {
                                 Swal.fire({
-                                    icon: "success",
-                                    title: "You're now officially enrolled",
-                                    background: "rgb(20, 20, 20)",
-                                    color: "rgb(240, 240, 240)",
-                                    confirmButtonColor: "rgb(62, 216, 255)"
+                                    toast: true,
+                                    position: 'bottom-right',
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                    timerProgressBar: true,
+                                    icon: "warning",
+                                    iconColor: "rgb(0, 0, 0)",
+                                    title: "Student ID already exist",
+                                    background: "rgb(43, 210, 252)",
+                                    color: "rgb(0, 0, 0)"
                                 });
-                                $('#username').val('');
                                 $('#studentid').val('');
-                                $('#fullname').val('');
-                                $('#age').val('');
-                                $('#gradesection').val('');
-                                $('#course').val('');
+                                return;
+                            }
+                            else if (response.data.ret == 0) {
+                                const frm = new FormData();
+                                frm.append("method", "checkUserFullName");
+                                frm.append('fullname', fullname);
+                                axios.post("handler.php", frm)
+                                    .then(function (response) {
+                                        if (response.data.ret == 1) {
+                                            Swal.fire({
+                                                toast: true,
+                                                position: 'bottom-right',
+                                                showConfirmButton: false,
+                                                timer: 1500,
+                                                timerProgressBar: true,
+                                                icon: "warning",
+                                                iconColor: "rgb(0, 0, 0)",
+                                                title: "Fullname already exist",
+                                                background: "rgb(43, 210, 252)",
+                                                color: "rgb(0, 0, 0)"
+                                            });
+                                            $('#fullname').val('');
+                                            return;
+                                        }
+                                        else if (response.data.ret == 0) {
+                                            const frm = new FormData();
+                                            frm.append("method", "checkUserEnrollment");
+                                            frm.append("username", username);
+
+                                            axios.post("handler.php", frm)
+                                                .then(response => {
+                                                    console.log(response.data);
+                                                    if (response.data.ret == 1) {
+                                                        Swal.fire({
+                                                            toast: true,
+                                                            position: 'bottom-right',
+                                                            showConfirmButton: false,
+                                                            timer: 1500,
+                                                            timerProgressBar: true,
+                                                            icon: "warning",
+                                                            iconColor: "rgb(0, 0, 0)",
+                                                            title: "You are already enrolled",
+                                                            background: "rgb(43, 210, 252)",
+                                                            color: "rgb(0, 0, 0)"
+                                                        });
+                                                    } else {
+                                                        const frm = new FormData();
+                                                        frm.append("method", "saveUser");
+                                                        frm.append('username', username);
+                                                        frm.append('studentid', studentid);
+                                                        frm.append('fullname', fullname);
+                                                        frm.append("gradesection", gradesection);
+                                                        frm.append("course", course);
+                                                        frm.append('age', age);
+                                                        axios.post("handler.php", frm)
+                                                            .then(function (response) {
+                                                                if (response.data.ret == 1) {
+                                                                    Swal.fire({
+                                                                        toast: true,
+                                                                        position: 'bottom-right',
+                                                                        showConfirmButton: false,
+                                                                        timer: 1500,
+                                                                        timerProgressBar: true,
+                                                                        icon: "success",
+                                                                        iconColor: "rgb(0, 0, 0)",
+                                                                        title: "You're now officially enrolled",
+                                                                        background: "rgb(43, 210, 252)",
+                                                                        color: "rgb(0, 0, 0)"
+                                                                    });
+                                                                    $('#studentid').val('');
+                                                                    $('#fullname').val('');
+                                                                    $('#age').val('');
+                                                                    $('#gradesection').val('');
+                                                                    $('#course').val('');
+                                                                }
+                                                            })
+                                                    }
+                                                });
+                                        }
+                                    })
                             }
                         })
                 }
