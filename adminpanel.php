@@ -44,19 +44,19 @@
                                                 <td>${user.course}</td>
                                                 <td>${user.gradesection}</td>
                                                 <td>${user.age}</td>
-                                            </tr>`;
+                                            </tr>
+                                            <td>
+                                                <button type="button" class="btnEdit" data-id="${user.id}">Edit</button>
+                                                <button type="button" class="btnDelete" data-id="${user.id}">Delete</button>
+                                            </td>
+                                            `;
                             });
-                            // <td>
-                            //     <button class="btnEdit" data-id="${user.id}">Edit</button>
-                            //     <button class="btnDelete" data-id="${user.id}">Delete</button>
-                            // </td>
                             $('.students-list-container').html(userHtml);
                         } else {
                             Swal.fire({
                                 icon: "info",
                                 title: "Oops...",
                                 text: response.data.message
-
                             });
                         }
                     })
@@ -65,19 +65,21 @@
                     });
             }
             list();
-            $(document).on('click', '.btnDelete', (e) => {
-                e.preventDefault();
-                const userId = $(this).data('id');
+            $(document).on('click', '.btnDelete', () => {
+                const id = $(this).data('id');
                 if (confirm("Are you sure you want to delete this user?")) {
                     const frm = new FormData();
                     frm.append("method", "deleteUser");
-                    frm.append("id", userId);
+                    frm.append("id", id);
                     axios.post("handler.php", frm)
                         .then(function (response) {
-                            if (response.data.retval == 1) {
+                            if (response.data.ret == 1) {
                                 alert("Data Deleted Successfully");
                                 list();
                             }
+                        })
+                        .catch(function (error) {
+                            console.error("Error deleting user:", error);
                         });
                 }
             });

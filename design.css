@@ -23,6 +23,10 @@ form {
     width: max-content;
     transform: translate(-50.1%, -50.1%);
 
+    nav {
+        display: flex;
+        flex-direction: column;
+    }
     .enrollment-section {
         position: relative;
         height: max-content;

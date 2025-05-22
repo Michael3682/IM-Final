@@ -15,11 +15,18 @@
             <h1>Enrollment Form</h1>
             <div class="form-group">
                 <div class="form-label">
+                    <label for="username">Username</label>
+                </div>
+                <div class="form-input">
+                    <input type="text" name="username" id="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-label">
                     <label for="fullname">Student ID</label>
                 </div>
                 <div class="form-input">
-                    <input type="text" name="studentid" id="studentid" placeholder="Ex. (1234567)" maxlength="7"
-                        required>
+                    <input type="text" name="studentid" id="studentid" placeholder="Ex. (1234567)" maxlength="7">
                 </div>
             </div>
             <div class="form-group">
@@ -28,7 +35,7 @@
                 </div>
                 <div class="form-input">
                     <input type="text" name="fullname" id="fullname"
-                        placeholder="Family name, First name and Middle name" required>
+                        placeholder="Family name, First name and Middle name">
                 </div>
             </div>
             <div class="form-group">
@@ -71,13 +78,14 @@
                         <label for="age">Age</label>
                     </div>
                     <div class="form-input">
-                        <input type="text" name="age" id="age" maxlength="3" required>
+                        <input type="text" name="age" id="age" maxlength="3">
                     </div>
                 </div>
             </div>
             <div class="btn-container">
                 <button id="btnSave" type='button'>Enroll</button>
-                <button type="button" onclick="window.location.href='enrolledstudents.php'">View Enrolled Students</button>
+                <button type="button" onclick="window.location.href='enrolledstudents.php'">View Enrolled
+                    Students</button>
             </div>
         </div>
     </form>
@@ -87,23 +95,24 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="bg.js"></script>
-    <script src="script.js"></script>
     <script>
         $(document).ready(function () {
-            $('#btnSave').click(function () {
+            $('#btnSave').click(() => {
+                let username = $('#username').val().trim();
                 let studentid = $('#studentid').val().trim();
                 let fullname = $('#fullname').val();
-                let age = $('#age').val().trim();
                 let gradesection = $('#gradesection').val();
                 let course = $('#course').val();
-                if (!studentid || !fullname || !age || !gradesection || !course) {
+                let age = $('#age').val().trim();
+                console.log("dwadwa")
+                if (!username || !studentid || !fullname || !age || !gradesection || !course) {
                     Swal.fire({
                         icon: "warning",
                         title: "Oops...",
                         text: "Please fill out all the fields!",
                         background: "rgb(20, 20, 20)",
                         color: "rgb(240, 240, 240)",
-                        confirmButtonColor: "#2bd2fc"
+                        confirmButtonColor: "rgb(62, 216, 255)"
                     });
                     return;
                 }
@@ -111,7 +120,10 @@
                     Swal.fire({
                         icon: "warning",
                         title: "Invalid Student ID",
-                        text: "Student ID must be a 7-digit number."
+                        text: "Student ID must be a 7-digit number.",
+                        background: "rgb(20, 20, 20)",
+                        color: "rgb(240, 240, 240)",
+                        confirmButtonColor: "rgb(62, 216, 255)"
                     });
                     $('#studentid').val('');
                     return;
@@ -120,7 +132,10 @@
                     Swal.fire({
                         icon: "warning",
                         title: "Invalid Age",
-                        text: "Age must be a number (max 3 digits)."
+                        text: "Age must be a number (max 3 digits).",
+                        background: "rgb(20, 20, 20)",
+                        color: "rgb(240, 240, 240)",
+                        confirmButtonColor: "rgb(62, 216, 255)"
                     });
                     $('#age').val('');
                     return;
@@ -128,22 +143,23 @@
                 else {
                     const frm = new FormData();
                     frm.append("method", "saveUser");
+                    frm.append('username', username);
                     frm.append('studentid', studentid);
                     frm.append('fullname', fullname);
-                    frm.append('age', age);
                     frm.append("gradesection", gradesection);
                     frm.append("course", course);
+                    frm.append('age', age);
                     axios.post("handler.php", frm)
-                        .then(function (dat) {
-                            if (dat.data.ret == 1) {
+                        .then(function (response) {
+                            if (response.data.ret == 1) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "You're now officially enrolled",
-                                    showConfirmButton: false,
                                     background: "rgb(20, 20, 20)",
                                     color: "rgb(240, 240, 240)",
-                                    timer: 1500
+                                    confirmButtonColor: "rgb(62, 216, 255)"
                                 });
+                                $('#username').val('');
                                 $('#studentid').val('');
                                 $('#fullname').val('');
                                 $('#age').val('');
@@ -152,7 +168,7 @@
                             }
                         })
                 }
-            });
+            })
             $('.js-example-basic-single').select2();
         });
     </script>
